@@ -1,0 +1,15 @@
+# PyTorch CPU (Windows)
+torch==2.2.0+cpu
+torchvision==0.17.0+cpu
+torchaudio==2.2.0+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Transformers & NLP
+transformers
+tokenizers
+
+# Utilitaires
+tqdm
+numpy
+opencv-python
+pillow

@@ -1,0 +1,122 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\title{Livrable 1 : Organisation de l'Équipe et Plan de Travail}
+\author{ENSAM RABAT}
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+\section*{Membres de l'Équipe (Trinôme)}
+
+Afin de structurer le travail et d'assurer une couverture complète des modules complexes de ce projet, nous proposons la répartition des rôles suivante :
+
+
+
+\maketitle
+
+\section*{Composition de l'Équipe (Trinôme)}
+
+Le projet sera mené par l'équipe suivante, avec une répartition claire des responsabilités pour les différents modules :
+
+\begin{table}[h]
+    \centering
+    \caption{Répartition des rôles et des responsabilités}
+    \begin{tabular}{>{\raggedright\arraybackslash}m{3cm} >{\raggedright\arraybackslash}m{3cm} >{\raggedright\arraybackslash}m{7cm}}
+        \toprule
+        \textbf{Rôle} & \textbf{Membre} & \textbf{Missions Principales et Modules Cibles} \\
+        \midrule
+        \textbf{Chef d'Équipe / NLP Lead} & \textbf{Zaynab ER-REGHAY} & Coordination générale, gestion du Git, intégration des modules NLP et fusion (Modules 1, 4, 5). \\
+        \midrule
+        \textbf{CV Lead / Gabarits Expert} & \textbf{Lahfari BILAL} & Prétraitement des images/PDF, développement du Module Gabarits, implémentation et entraînement du modèle CV hybride (Modules 1, 2, 3). \\
+        \midrule
+        \textbf{Architecte Système / MLOps} & \textbf{Malek SAMI} & Architecture offline, pipeline principal (\texttt{main.py}), interface utilisateur, gestion des dépendances et optimisation des performances (Modules 1, 5, 6). \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{ Plan de Travail Détaillé (Phase 1 \& 2)}
+
+Le projet sera découpé en deux phases principales pour assurer une livraison progressive et des tests d'intégration réguliers, conformément aux recommandations du sujet\textsuperscript{1}.
+
+\subsection*{Phase 1 : Infrastructure \& Prototypes Simples (Jours 1-10)}
+
+L'objectif est de mettre en place l'environnement 100\% offline et de disposer d'un prototype fonctionnel pour chaque tâche de classification.
+
+\begin{table}[h]
+    \centering
+    \caption{Détail de la Phase 1}
+    \label{tab:phase1_detail}
+    \begin{tabular}{m{0.5cm} m{6cm} m{2cm} m{4cm}}
+        \toprule
+        \textbf{Étape} & \textbf{Tâches Clés} & \textbf{Responsable} & \textbf{Livrables de la Phase 1} \\
+        \midrule
+        1. & Config Offline : Création de \texttt{setup\_offline.py} (téléchargement ResNet50, CamemBERT, Tesseract) & Architecte / CV Lead & \multirow{2}{4cm}{Script \texttt{setup\_offline.py}} \\
+        2. & Définition de la structure de dossiers \texttt{models/} & & \\
+        \midrule
+        3. & Pipeline Basique : Conversion PDF vers images (Module 6, Étape 1) & \multirow{2}{2cm}{Architecte} & \multirow{2}{4cm}{Classe \texttt{OfflineModelManager}} \\
+        4. & Implémentation de la classe \texttt{OfflineModelManager} (chargement simple des modèles)\textsuperscript{6} & & \\
+        \midrule
+        5. & Prototype NLP (Motifs) : Définition des dictionnaires de motifs sémantiques pour les 5 classes\textsuperscript{7} & \multirow{2}{2cm}{NLP Lead} & \multirow{2}{4cm}{Dictionnaires de motifs (JSON/Python)} \\
+        6. & Implémentation du score de classification basé uniquement sur les mots-clés (4.2.1)\textsuperscript{8} & & \\
+        \midrule
+        7. & Prototype CV (ResNet) : Entraînement initial simple de ResNet50 (sans gabarits) pour établir une baseline\textsuperscript{9} & CV Lead & Baseline ResNet50 simple. \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{ Stratégie de Données Synthétiques}
+
+Étant donné l'impossibilité de collecter un jeu de données réelles suffisant et labellisé (CNIE, relevés bancaires, factures, etc.), nous allons adopter une stratégie de \textbf{Génération de Données Synthétiques} combinée à des techniques d'Augmentation de Données pour contourner ce blocage.
+
+\subsection*{1. Génération de Données Synthétiques}
+
+L'objectif est de créer des documents qui imitent la structure visuelle et le contenu textuel des 5 classes, sans utiliser de vraies données sensibles.
+
+\subsubsection*{Pour les Relevés/Factures (Structure Tabulaire) :}
+\begin{itemize}
+    \item Utiliser des bibliothèques de génération de PDF pour créer des tables avec des champs typiques (Montant, Date, Description).
+    \item Remplir les champs avec des données aléatoires mais cohérentes (ex: dates logiques, montants float).
+    \item Intégrer les \textbf{Motifs Sémantiques} définis (ex: "solde", "kWh", "m³") dans les textes générés\textsuperscript{10}.
+\end{itemize}
+
+\textit{Intérêt} : Fournit un corpus labellisé pour le fine-tuning de CamemBERT et une base d'entraînement pour la détection de structure tabulaire (Transformée de Hough)\textsuperscript{11}.
+
+\subsubsection*{Pour les Pièces d'Identité (Format et Features Gabarits) :}
+\begin{itemize}
+    \item Générer des images avec le ratio d'aspect correct (format carte)\textsuperscript{12}.
+    \item Placer des zones pour la photo, le numéro d'identité, et la date, pour entraîner les détecteurs de zones (ex: Cascade Classifiers pour la photo)\textsuperscript{13}.
+    \item Ajouter des images de fond (comme la carte du Maroc) pour simuler les gabarits visuels\textsuperscript{14}.
+\end{itemize}
+
+\subsection*{2. Augmentation de Données (Clé de la Robustesse)}
+
+Nous appliquerons des techniques d'augmentation agressives aux données synthétiques pour simuler les conditions réelles des documents administratifs\textsuperscript{15}.
+
+\begin{itemize}
+    \item \textbf{Augmentations CV} : Rotations légères, changements de contraste, ajout de bruit, compression JPEG pour simuler une mauvaise qualité de scanner/photo\textsuperscript{16}.
+    \item \textbf{Augmentations OCR} : Dégrader artificiellement les images (flou, faible résolution) pour entraîner le pipeline à mieux gérer les erreurs post-OCR\textsuperscript{17}.
+\end{itemize}
+
+\subsection*{3. Validation}
+
+Un petit jeu de données réelles (anonymisées et ne nécessitant pas d'autorisation spéciale) sera recherché pour la \textbf{Validation Finale} et l'évaluation de la Robustesse\textsuperscript{18}.
+
+\end{document}
