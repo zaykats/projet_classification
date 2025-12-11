@@ -1,0 +1,206 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\geometry{margin=2.5cm}
+
+\definecolor{ensam-blue}{RGB}{0, 51, 102}
+\definecolor{success-green}{RGB}{34, 139, 34}
+\definecolor{warning-orange}{RGB}{255, 140, 0}
+\definecolor{progress-blue}{RGB}{70, 130, 180}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=ensam-blue,
+    filecolor=ensam-blue,
+    urlcolor=ensam-blue,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Rapport d'Avancement \#2}
+\fancyhead[R]{\small ENSAM Rabat - 2025}
+\fancyfoot[C]{\thepage}
+
+\title{
+    \vspace{-2cm}
+    \Huge\textbf{Rapport d'Avancement \#2} \\
+    \vspace{0.5cm}
+    \LARGE Classification de Documents Administratifs \\
+    \large Projet CV-NLP
+}
+
+\author{
+    \textbf{Trinôme :} \\
+    Zaynab ER-REGHAY (Chef d'Équipe ) \\
+    Bilal LAHFARI  \\
+    Sami MALEK 
+}
+
+\date{10 Décembre 2025}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\section*{Synthèse Exécutive}
+
+L’avancement du projet s’est concentré essentiellement sur la \textbf{construction des gabarits structurels}, réalisée entièrement \textbf{from scratch} à partir de l'analyse des documents officiels marocains (CNIE, factures nationales, relevés bancaires, etc.), conformément aux documents de référence disponibles sur les portails institutionnels.  
+Les MVPs fonctionnels de classification (CV et NLP) ont été entamés et sont déjà présents dans notre dépôt GitHub. L’objectif n’était pas d’avancer fortement sur le code, mais d’assurer une base structurelle robuste facilitant toutes les prochaines étapes.
+
+L’ensemble du pipeline CV–NLP est désormais clairement défini, et les premières briques fonctionnelles sont opérationnelles.
+
+\tableofcontents
+\newpage
+
+
+\section{Tâches Réalisées}
+
+\subsection{Travail Principal : Construction des Gabarits (90\%) — Bilal LAHFARI}
+
+La majeure partie de l’avancement porte sur la \textbf{mise en place de gabarits fiables, précis et normalisés} pour les principaux documents administratifs marocains.
+
+\subsubsection{Méthodologie}
+
+Les gabarits ont été élaborés sur la base :
+\begin{itemize}[leftmargin=*]
+    \item des \textbf{documents officiels publiés} sur les sites nationaux (ANCFCC, DGSN, ONEE, banques marocaines) ;
+    \item des \textbf{formats standardisés} (CNIE, factures A4, relevés bancaires) ;
+    \item de mesures précises (ratios d'aspect, zones statiques, zones variables).
+\end{itemize}
+
+Chaque gabarit a été construit manuellement à partir d’images de référence (voir Annexes), en identifiant systématiquement :
+\begin{itemize}
+    \item zones fixes (logos, entêtes, cadres) ;
+    \item zones à forte stabilité (photo, tableau, coordonnées) ;
+    \item zones textuelles variables ;
+    \item ratio géométrique caractéristique.
+\end{itemize}
+
+\subsubsection{Gabarits finalisés}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{CNIE} — Ratio officiel ID-1 : $1.586$  
+    Zones : photo, emblème, information bilingue, blocs identité.
+    \item \textbf{Relevés bancaires} — Format A4 ($1.414$)  
+    Zones : entête banque, tableau opérations, solde.
+    \item \textbf{Factures eau/électricité} ONEE, LYDEC, REDAL, AMENDIS  
+    Zones : références client, index, consommation, montant.
+\end{itemize}
+
+\textit{Remarque :} Les gabarits ont été réalisés intégralement par nous, sans reprise automatique externe.
+
+\subsubsection{Implémentation Minimaliste (MVP) — Dépôt GitHub}
+
+L'implémentation actuelle se limite volontairement à :
+\begin{itemize}
+    \item détection du ratio d'aspect ;
+    \item analyse de zones prédéfinies ;
+    \item premiers scoreurs simples (matching structurel).
+\end{itemize}
+
+Le but est de rester aligné avec les attentes du livrable \#2 : \textbf{priorité au design des gabarits}, non au développement complet.
+
+Lien GitHub : \url{https://github.com/SamiMalek10/Automatic_Documents_Classifier} 
+
+\subsection{Module NLP — Extraction Textuelle (50\%) — Sami MALEK}
+
+Les avancées NLP se concentrent sur :
+\subsubsection{Pipeline OCR (MVP)}
+\begin{itemize}
+    \item extraction robuste via Tesseract ;
+    \item nettoyage minimal (remplacement O/0, dates) ;
+    \item structuration de sortie pour compatibilité avec la fusion.
+\end{itemize}
+
+\subsubsection{Dictionnaires de Mots-clés}
+Une première version légère a été construite pour :
+\begin{itemize}
+    \item CNIE ;
+    \item factures ;
+    \item relevés bancaires ;
+    \item attestations employeur.
+\end{itemize}
+
+Les modèles avancés (CamemBERT, transformers) ne sont pas encore lancés : \textbf{l'objectif était la mise en place du pipeline minimal}.
+
+\subsection{Module Fusion Multimodale (35\%) — Zaynab ER-REGHAY}
+
+Une version MVP du mécanisme de fusion a été créée :
+\begin{itemize}
+    \item combinaison gabarit + score NLP ;
+    \item hiérarchie de décision très simple ;
+    \item évaluation sur quelques documents tests.
+\end{itemize}
+
+Là aussi, l’objectif n’était pas de coder un système complet mais de poser \textbf{une base solide pour la fusion future}.
+
+
+\section{Tâches en Cours}
+
+\begin{itemize}[leftmargin=*]
+    \item Finalisation gabarits pour :  
+    \textbf{attestation employeur}, \textbf{certificat de scolarité}, \textbf{anciennes factures papier}.
+    \item Mise en place dataset interne (50 documents supplémentaires).  
+    \item Création d'un validateur géométrique (zones fixes + tolérance).
+    \item Standardisation format de sortie (JSON unifié CV/NLP).
+\end{itemize}
+
+\section{Tâches à Venir}
+
+\subsection{Court Terme (Avant Séance Prochaine)}
+
+\begin{itemize}[leftmargin=*]
+    \item Ajouter 3 nouveaux gabarits prioritaires.
+    \item Améliorer robustesse ratio / orientation.
+    \item Préparer un dataset d'évaluation mixte (20 docs/gabarit).
+\end{itemize}
+
+\subsection{Moyen Terme}
+
+\begin{itemize}[leftmargin=*]
+    \item Intégration CNN (ResNet50) avec gabarits.  
+    \item Lancement fine-tuning CamemBERT.  
+    \item Transformation du MVP en pipeline complet.  
+\end{itemize}
+
+
+\section{Avancement Technique}
+
+\subsection{Computer Vision — Synthèse}
+
+\textbf{Focus principal = gabarits}.  
+C’est le cœur de l’avancement actuel.  
+Les pipelines avancés (CNN, statistiques) ne sont qu’esquissés (MVP GitHub).
+
+\subsection{NLP — Synthèse}
+
+Extraction textuelle + premiers motifs.  
+Aucun modèle complexe n’a encore été entraîné.
+
+\subsection{Fusion Multimodale — Synthèse}
+
+Fusion MVP opérationnelle mais très simplifiée.
+
+
+\section*{Annexes}
+
+\noindent\textbf{Annexe A : Exemples de documents officiels utilisés pour les gabarits}  
+(CNIE, factures ONEE, relevés bancaires — images non incluses dans ce PDF)
+
+\end{document}
